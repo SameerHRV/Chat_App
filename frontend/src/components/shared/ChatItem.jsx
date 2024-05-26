@@ -1,36 +1,62 @@
-import React from "react";
+import React, { memo } from "react";
 import { Link } from "../style/styleComponents";
+import { Box, Stack, Typography } from "@mui/material";
+import Avatar from "./Avatar";
 
 const ChatItem = ({
   avatar = [],
   name,
   _id,
   groupChat = false,
-  samerSender = false,
+  samerSender,
   isOnline,
-  newMessage,
+  newMessageAlert,
   index = 0,
-  handleDeleteChatOpen,
+  handleDeleteChat,
 }) => {
   return (
-    <Link to={`/chat/${_id}`}>
+    <Link
+      sx={{
+        padding: "0",
+      }}
+      to={`/chat/${_id}`}
+      onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}
+    >
       <div
         style={{
           display: "flex",
-          gap: "10px",
+          gap: "1rem",
           // justifyContent: "space-between",
           alignItems: "center",
-          padding: "10px",
+          padding: "1rem",
           backgroundColor: samerSender ? "black" : "unset",
-          color: samerSender ? "black" : "unset",
-          cursor: "pointer",
+          color: samerSender ? "white" : "unset",
+          // cursor: "pointer",
           position: "relative",
         }}
       >
-        {/* AVaTar Card */}
+        <Avatar avatar={avatar} />
+        <Stack>
+          <Typography>{name}</Typography>
+          {newMessageAlert && <Typography>{newMessageAlert.count} New Message</Typography>}
+        </Stack>
+        {isOnline && (
+          <Box
+            sx={{
+              width: "10px",
+              height: "10px",
+              borderRadius: "50%",
+              backgroundColor: "green",
+              position: "absolute",
+              right: "1rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+            }}
+          />
+        )}
       </div>
     </Link>
   );
 };
 
-export default ChatItem;
+export default memo(ChatItem);
