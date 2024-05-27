@@ -18,7 +18,7 @@ const NewGroup = () => {
 
   const closeHandler = () => {};
   return (
-    <Dialog open>
+    <Dialog open onClose={closeHandler}>
       <Stack
         padding={{
           xs: "1rem",
