@@ -1,15 +1,15 @@
-import { AvatarGroup, Avatar as AvatarImg, Box, Stack } from "@mui/material";
+import { Avatar, AvatarGroup, Box, Stack } from "@mui/material";
 import React from "react";
 
-const Avatar = ({ avatar = [], max = 4 }) => {
+const AvatarCard = ({ avatar = [], max = 4 }) => {
   return (
     <Stack direction={"row"} spacing={0.5}>
       <AvatarGroup max={max}>
         <Box width={"5rem"} height={"3rem"}>
-          {avatar.map((src, index) => {
-            <AvatarImg
-              key={Math.random() * 100}
-              src={src}
+          {avatar?.map((i, index) => (
+            <Avatar
+              key={Math.round() * 100}
+              src={i}
               alt={`Avatar ${index}`}
               sx={{
                 width: "3rem",
@@ -20,12 +20,12 @@ const Avatar = ({ avatar = [], max = 4 }) => {
                   sm: `${index}rem`,
                 },
               }}
-            />;
-          })}
+            />
+          ))}
         </Box>
       </AvatarGroup>
     </Stack>
   );
 };
 
-export default Avatar;
+export default AvatarCard;
