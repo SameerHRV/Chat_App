@@ -24,22 +24,18 @@ const registerUser = globalAsyncHandler(async (req, res) => {
     throw new ApiError(400, "User already exists");
   }
 
-  const file = req?.file;
+  const avatarLocalFilePath = req.files?.avatar[0]?.path;
 
-  if (!file) {
+  if (!avatarLocalFilePath) {
     throw new ApiError(400, "Please provide files");
   }
 
-  const avatarUpload = await uploadToCloudinary([file]);
+  const avatarUploadResult = await uploadToCloudinary(avatarLocalFilePath);
 
   const avatar = {
-    public_id: avatarUpload[0]?.public_id,
-    url: avatarUpload[0]?.url,
+    public_id: avatarUploadResult[0].public_id,
+    url: avatarUploadResult[0].url,
   };
-
-  if (!avatar) {
-    throw new ApiError(400, "Please provide files");
-  }
 
   const newUser = await User.create({
     name: name.toLowerCase(),
