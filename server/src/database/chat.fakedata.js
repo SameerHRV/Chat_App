@@ -3,7 +3,7 @@ import { User } from "../models/user.model.js";
 import { Chat } from "../models/chat.model.js";
 import { Message } from "../models/message.model.js";
 
-const createSingleChats = async (numChats) => {
+const createSingleChats = async () => {
   try {
     const users = await User.find().select("_id");
 

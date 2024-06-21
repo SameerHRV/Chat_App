@@ -10,6 +10,7 @@ import { globalErrorHandler } from "./middlewares/globalErrorHandler.middleware.
 import adminRouter from "./routers/admin.route.js";
 import chatRouter from "./routers/chat.router.js";
 import userRouter from "./routers/user.router.js";
+import { faker } from "@faker-js/faker";
 
 const app = express();
 export const server = createServer(app);
@@ -47,7 +48,7 @@ app.use("/api/v1/admin", adminRouter);
 io.on("connection", (socket) => {
   const tempUser = {
     _id: uuid(),
-    name: "Sameer",
+    name: faker.person.fullName(),
   };
   console.log("User connected", socket.id);
 
