@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
@@ -5,14 +6,14 @@ import { createServer } from "http";
 import morgan from "morgan";
 import { Server } from "socket.io";
 import { v4 as uuid } from "uuid";
+import { config } from "./config/config.js";
 import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { getSockets } from "./helper/helper.js";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler.middleware.js";
+import { Message } from "./models/message.model.js";
 import adminRouter from "./routers/admin.route.js";
 import chatRouter from "./routers/chat.router.js";
 import userRouter from "./routers/user.router.js";
-import { faker } from "@faker-js/faker";
-import { getSockets } from "./helper/helper.js";
-import { Message } from "./models/message.model.js";
 
 const app = express();
 export const server = createServer(app);
@@ -22,7 +23,13 @@ app.use(morgan("dev"));
 
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:4174",
+      "http://localhost:4173",
+      config.cors,
+    ],
     credentials: true,
   }),
 );

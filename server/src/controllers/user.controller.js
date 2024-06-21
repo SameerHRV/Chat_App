@@ -5,6 +5,7 @@ import { Request } from "../models/request.model.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiRespons.js";
+import { uploadToCloudinary } from "../utils/cloudinary.js";
 import { emitEvents } from "../utils/features.js";
 import { generateAccessAndRefreshToken, options } from "../utils/generateAccessAndRefreshToken.js";
 import { globalAsyncHandler } from "../utils/globalAsyncHandler.js";
@@ -23,10 +24,22 @@ const registerUser = globalAsyncHandler(async (req, res) => {
     throw new ApiError(400, "User already exists");
   }
 
+  const file = req?.file;
+
+  if (!file) {
+    throw new ApiError(400, "Please provide files");
+  }
+
+  const avatarUpload = await uploadToCloudinary([file]);
+
   const avatar = {
-    public_id: "123",
-    url: "https://www.w3schools.com/howto/img_avatar.png",
+    public_id: avatarUpload[0]?.public_id,
+    url: avatarUpload[0]?.url,
   };
+
+  if (!avatar) {
+    throw new ApiError(400, "Please provide files");
+  }
 
   const newUser = await User.create({
     name: name.toLowerCase(),

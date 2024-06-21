@@ -1,33 +1,84 @@
 import { useFileHandler, useInputValidation } from "6pp";
 import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import { Avatar, Button, Container, IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
-import React from "react";
+import axios from "axios";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { VisuallyHiddenInput } from "../components/styles/StyleedComponents";
+import { server } from "../constants/config";
+import { userExists } from "../redux/reducers/auth";
 import { emailValidator, usernameValidator } from "../utils/validator";
 
 const Login = () => {
-  const [Login, setLogin] = React.useState(true);
-
-  const handleLoggin = (e) => {
-    e.preventDefault();
-    setLogin((prev) => !prev);
-  };
+  const dispatch = useDispatch();
+  const [Login, setLogin] = useState(true);
 
   const avatar = useFileHandler("single");
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-  };
-
-  const handleSignup = (e) => {
-    e.preventDefault();
-  };
-
   const name = useInputValidation("", usernameValidator);
   const username = useInputValidation("", usernameValidator);
   const bio = useInputValidation("");
   const email = useInputValidation("", emailValidator);
   const password = useInputValidation("");
+
+  const handleLoggin = () => {
+    setLogin((prev) => !prev);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/users/login`,
+        {
+          username: username.value,
+          password: password.value,
+        },
+        config
+      );
+      dispatch(userExists(true));
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+      console.log(error);
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("avatar", avatar.file);
+    formData.append("name", name.value);
+    formData.append("username", username.value);
+    formData.append("bio", bio.value);
+    formData.append("email", email.value);
+    formData.append("password", password.value);
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(`${server}/api/v1/users/register`, formData, config);
+      dispatch(userExists(true));
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+      console.log(error);
+    }
+  };
 
   return (
     <Container
@@ -53,7 +104,7 @@ const Login = () => {
                 width: "100%",
                 marginTop: "1rem",
               }}
-              onSubmit={handleSignup}
+              onSubmit={handleLogin}
             >
               <TextField
                 label="Username OR Email"
@@ -100,7 +151,7 @@ const Login = () => {
                 width: "100%",
                 marginTop: "1rem",
               }}
-              onSubmit={handleRegister}
+              onSubmit={handleSignup}
             >
               <Stack position={"relative"} width={"10rem"} margin={"auto"}>
                 <Avatar
