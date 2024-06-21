@@ -2,6 +2,8 @@ import { ApiError } from "./ApiError.js";
 import { User } from "../models/user.model.js";
 
 export const options = {
+  maxAge: 15 * 24 * 60 * 60 * 1000,
+  sameSite: "none",
   httpOnly: true,
   secure: true,
 };

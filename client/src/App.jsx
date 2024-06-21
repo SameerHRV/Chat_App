@@ -1,12 +1,12 @@
+import axios from "axios";
 import { lazy, Suspense, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute";
 import { LayoutLoader } from "./components/layout/Loders";
-import axios from "axios";
 import { server } from "./constants/config";
-import { useDispatch, useSelector } from "react-redux";
-import { userNotExists } from "./redux/reducers/auth";
-import { Toaster } from "react-hot-toast";
+import { userExists } from "./redux/reducers/auth";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -19,6 +19,8 @@ const MessageManagemant = lazy(() => import("./pages/admin/MessageManagemant"));
 const ChatManagement = lazy(() => import("./pages/admin/ChatManagement"));
 const UserManagemant = lazy(() => import("./pages/admin/UserManagemant"));
 
+// const user = true;
+
 const App = () => {
   const { user, loading } = useSelector((state) => state.auth);
 
@@ -26,13 +28,14 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get(`${server}/api/v1/users/user-profile`)
-      .then((res) => {
-        console.log(res);
+      .get(`${server}/api/v1/users/user-profile`, {
+        withCredentials: true,
       })
-      .catch(() => {
-        dispatch(userNotExists());
-        // console.log(err);
+      .then(({ data }) => {
+        dispatch(userExists(data.user));
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, [dispatch]);
 

@@ -1,11 +1,10 @@
-import React from "react";
-import Header from "./Header";
-import Title from "../share/Title";
 import { Grid } from "@mui/material";
-import ChatList from "../spec/ChatList";
-import { samepleChats } from "../../constants/sampleData";
 import { useParams } from "react-router-dom";
+import { samepleChats } from "../../constants/sampleData";
+import Title from "../share/Title";
+import ChatList from "../spec/ChatList";
 import Profile from "../spec/Profile";
+import Header from "./Header";
 
 const AppLayout = (WrapperComponent) => {
   return (props) => {

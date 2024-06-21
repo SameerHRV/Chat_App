@@ -31,23 +31,18 @@ userRouter.post(
 );
 userRouter.post("/login", loginValidator(), validateHandler, loginUser);
 
-userRouter.get("/user-profile", JWTVerify, getUser);
-userRouter.post("/logout", JWTVerify, logoutUser);
-userRouter.get("/search", JWTVerify, searchUser);
-userRouter.put(
-  "/friend-request",
-  sendRequestValidator(),
-  validateHandler,
-  JWTVerify,
-  sendFriendRequest,
-);
+// *secure routes
+userRouter.use(JWTVerify);
+userRouter.get("/user-profile", getUser);
+userRouter.get("/logout", logoutUser);
+userRouter.get("/search", searchUser);
+userRouter.put("/friend-request", sendRequestValidator(), validateHandler, sendFriendRequest);
 userRouter.put(
   "/accept-friend-request",
   acceptRequestValidator(),
   validateHandler,
-  JWTVerify,
   acceptFriendRequest,
 );
-userRouter.get("/notifications", JWTVerify, getAllNotifications);
-userRouter.get("/friends", JWTVerify, getMyFriends);
+userRouter.get("/notifications", getAllNotifications);
+userRouter.get("/friends", getMyFriends);
 export default userRouter;

@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: null,
+  user: false,
   isAdmin: false,
-  isLoading: false,
+  loader: true,
 };
 
 const authSlice = createSlice({
@@ -12,15 +12,14 @@ const authSlice = createSlice({
   reducers: {
     userExists: (state, action) => {
       state.user = action.payload;
-      state.isLoading = false;
+      state.loader = false;
     },
-
     userNotExists: (state) => {
-      state.user = null;
-      state.isLoading = false;
+      state.user = false;
+      state.loader = false;
     },
   },
 });
 
-export const { userExists, userNotExists } = authSlice.actions;
 export default authSlice;
+export const { userExists, userNotExists } = authSlice.actions;

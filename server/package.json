@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "SET NODE_ENV=development && nodemon src/server.js",
-    "bun:dev": "SET NODE_ENV=development && bun --watch run src/server.js",
     "start": "SET NODE_ENV=production && node src/server.js"
   },
   "author": "Sameer Harapanahalli",

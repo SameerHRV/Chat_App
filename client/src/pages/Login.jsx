@@ -27,7 +27,6 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     const config = {
       withCredentials: true,
       headers: {
@@ -63,15 +62,13 @@ const Login = () => {
     formData.append("email", email.value);
     formData.append("password", password.value);
 
-    const config = {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    };
-
     try {
-      const { data } = await axios.post(`${server}/api/v1/users/register`, formData, config);
+      const { data } = await axios.post(`${server}/api/v1/users/register`, formData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       dispatch(userExists(true));
       toast.success(data.message);
     } catch (error) {

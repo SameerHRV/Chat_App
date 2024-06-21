@@ -95,7 +95,8 @@ const loginUser = globalAsyncHandler(async (req, res) => {
 
 const logoutUser = globalAsyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
-  res
+
+  return res
     .status(200)
     .clearCookie("accessToken")
     .json(
