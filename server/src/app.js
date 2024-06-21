@@ -5,12 +5,14 @@ import { createServer } from "http";
 import morgan from "morgan";
 import { Server } from "socket.io";
 import { v4 as uuid } from "uuid";
-import { NEW_MESSAGE } from "./constants/events.js";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler.middleware.js";
 import adminRouter from "./routers/admin.route.js";
 import chatRouter from "./routers/chat.router.js";
 import userRouter from "./routers/user.router.js";
 import { faker } from "@faker-js/faker";
+import { getSockets } from "./helper/helper.js";
+import { Message } from "./models/message.model.js";
 
 const app = express();
 export const server = createServer(app);
@@ -45,11 +47,16 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/chats", chatRouter);
 app.use("/api/v1/admin", adminRouter);
 
+export const userIDs = new Map();
+
+// io.use((socket, next) => {});
+
 io.on("connection", (socket) => {
   const tempUser = {
     _id: uuid(),
     name: faker.person.fullName(),
   };
+  userIDs.set(socket.id, tempUser._id.toString());
   console.log("User connected", socket.id);
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, messages }) => {
@@ -69,11 +76,25 @@ io.on("connection", (socket) => {
       sender: tempUser._id,
       chat: chatId,
     };
-    console.log("New message", messageForRealTime);
+
+    const usersSockets = getSockets(members);
+    io.to(usersSockets).emit(NEW_MESSAGE, {
+      chatId,
+      messages: messageForRealTime,
+    });
+    io.to(usersSockets).emit(NEW_MESSAGE_ALERT, {
+      chatId,
+    });
+    try {
+      await Message.create(messageForDb);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   socket.on("disconnect", () => {
     console.log("User disconnected");
+    userIDs.delete(socket.id);
   });
 });
 
