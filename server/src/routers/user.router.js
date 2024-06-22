@@ -33,7 +33,7 @@ userRouter.post("/login", loginValidator(), validateHandler, loginUser);
 
 // *secure routes
 userRouter.use(JWTVerify);
-userRouter.get("/user-profile", getUser);
+userRouter.get("/profile", getUser);
 userRouter.get("/logout", logoutUser);
 userRouter.get("/search", searchUser);
 userRouter.put("/friend-request", sendRequestValidator(), validateHandler, sendFriendRequest);
