@@ -1,6 +1,7 @@
 import { Add, Group, Logout, Menu, NotificationAdd, Search } from "@mui/icons-material";
 import { AppBar, Backdrop, Box, IconButton, Toolbar, Tooltip, Typography } from "@mui/material";
 import React, { lazy, Suspense } from "react";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 import { orange } from "../../constants/color";
 
@@ -10,6 +11,19 @@ const NotifactionDialog = lazy(() => import("../dialogs/Notifaction"));
 
 const Header = () => {
   const navigate = useNavigate();
+=======
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { orange } from "../../constants/colors";
+
+const SearchDialog = lazy(() => import("../spec/SearchDialog"));
+const NotifactionsDialog = lazy(() => import("../spec/NotifactionsDialog"));
+const NewGroup = lazy(() => import("../spec/NewGroup"));
+
+const Header = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+>>>>>>> 3dc77cd73031c1de4f5a3b1ee4fe48512744cd03
 
   const [isMobile, setIsMobile] = React.useState(false);
   const [isSearch, setIsSearch] = React.useState(false);
@@ -84,12 +98,20 @@ const Header = () => {
       )}
       {isNotifaction && (
         <Suspense fallback={<Backdrop open={true} />}>
+<<<<<<< HEAD
           <NotifactionDialog />
+=======
+          <NotifactionsDialog />
+>>>>>>> 3dc77cd73031c1de4f5a3b1ee4fe48512744cd03
         </Suspense>
       )}
       {isNewGroup && (
         <Suspense fallback={<Backdrop open={true} />}>
+<<<<<<< HEAD
           <NewGroupDialog />
+=======
+          <NewGroup />
+>>>>>>> 3dc77cd73031c1de4f5a3b1ee4fe48512744cd03
         </Suspense>
       )}
     </>

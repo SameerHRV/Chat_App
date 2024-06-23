@@ -53,58 +53,48 @@ const registerUser = globalAsyncHandler(async (req, res) => {
   res
     .status(201)
     .cookie("accessToken", accessToken, options)
-    .json(
-      new ApiResponse(200, {
-        createUser,
-        message: "User created successfully",
-      }),
-    );
+    .json(new ApiResponse(200, createUser, "User created successfully"));
 });
 
 const loginUser = globalAsyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, password } = req.body;
 
-  const user = await User.findOne({
-    $or: [{ email }, { username }],
-  });
+  const user = await User.findOne({ username }).select("+password");
 
   if (!user) {
-    throw new ApiError(400, "User not found");
+    return res.status(401).json({
+      success: false,
+      message: "Invalid Username or Password",
+    });
   }
 
-  const isValidPassword = await user.comparePassword(password);
+  const isMatch = await user.comparePassword(password);
 
-  if (!isValidPassword) {
-    throw new ApiError(400, "Invalid password");
-  }
-
-  const createUser = await User.findById(user._id).select("-password");
+  if (!isMatch)
+    return res.status(401).json({
+      success: false,
+      message: "Invalid Username or Password",
+    });
 
   const { accessToken } = await generateAccessAndRefreshToken(user._id);
 
   res
     .status(200)
     .cookie("accessToken", accessToken, options)
-    .json(
-      new ApiResponse(200, {
-        createUser,
-        message: "User logged in successfully",
-      }),
-    );
+    .json(new ApiResponse(200, user, "User logged in"));
 });
 
 const logoutUser = globalAsyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
-
   return res
     .status(200)
-    .clearCookie("accessToken")
-    .json(
-      new ApiResponse(200, {
-        user,
-        message: "User logged out successfully",
-      }),
-    );
+    .cookie("accessToken", "", {
+      ...options,
+      maxAge: 0,
+    })
+    .json({
+      success: true,
+      message: "Logged out successfully",
+    });
 });
 
 const getUser = globalAsyncHandler(async (req, res) => {
