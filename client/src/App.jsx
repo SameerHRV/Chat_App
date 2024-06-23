@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute";
 import { LayoutLoader } from "./components/layout/Loders";
 import { server } from "./constants/config";
-import { userExists } from "./redux/reducers/auth";
+import { userExists, userNotExists } from "./redux/reducers/auth";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -22,24 +22,19 @@ const UserManagemant = lazy(() => import("./pages/admin/UserManagemant"));
 // const user = true;
 
 const App = () => {
-  const { user, loading } = useSelector((state) => state.auth);
+  // console.log(server);
+  const { user, loader } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     axios
-      .get(`${server}/api/v1/users/user-profile`, {
-        withCredentials: true,
-      })
-      .then(({ data }) => {
-        dispatch(userExists(data.user));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      .get(`${server}/api/v1/users/profile`, { withCredentials: true })
+      .then((res) => dispatch(userExists(res.data.user)))
+      .catch(() => dispatch(userNotExists()));
   }, [dispatch]);
 
-  return loading ? (
+  return loader ? (
     <LayoutLoader />
   ) : (
     <BrowserRouter>
@@ -47,9 +42,10 @@ const App = () => {
         <Routes>
           <Route element={<ProtectRoute user={user} />}>
             <Route path="/" element={<Home />} />
-            <Route path="/Chat/:chatId" element={<Chat />} />
+            <Route path="/chat/:chatId" element={<Chat />} />
             <Route path="/groups" element={<Groups />} />
           </Route>
+
           <Route
             path="/login"
             element={
@@ -60,14 +56,15 @@ const App = () => {
           />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/user" element={<UserManagemant />} />
-          <Route path="/admin/chat" element={<ChatManagement />} />
-          <Route path="/admin/message" element={<MessageManagemant />} />
+          <Route path="/admin/users" element={<UserManagemant />} />
+          <Route path="/admin/chats" element={<ChatManagement />} />
+          <Route path="/admin/messages" element={<MessageManagemant />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
-      <Toaster />
+
+      <Toaster position="bottom-center" />
     </BrowserRouter>
   );
 };

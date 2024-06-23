@@ -1,13 +1,9 @@
 import { Add, Group, Logout, Menu, NotificationAdd, Search } from "@mui/icons-material";
 import { AppBar, Backdrop, Box, IconButton, Toolbar, Tooltip, Typography } from "@mui/material";
 import React, { lazy, Suspense } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { orange } from "../../constants/colors";
-import axios from "axios";
-import { server } from "../../constants/config";
-import { toast } from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { userNotExists } from "../../redux/reducers/auth";
 
 const SearchDialog = lazy(() => import("../spec/SearchDialog"));
 const NotifactionsDialog = lazy(() => import("../spec/NotifactionsDialog"));
@@ -46,32 +42,7 @@ const Header = () => {
     navigate("/groups");
   };
 
-  // const logoutHandler = (e) => {
-  //   e.preventDefault();
-  //   axios
-  //     .get(`${server}/api/v1/users/logout`, {
-  //       withCredentials: true,
-  //     })
-  //     .then((res) => {
-  //       dispatch(userNotExists());
-  //       toast.success("Logged out successfully", res.data?.message);
-  //     })
-  //     .catch((err) => {
-  //       toast.error("Error Logging out", err.response?.data?.message);
-  //     });
-  // };
-
-  const logoutHandler = async () => {
-    try {
-      const { data } = await axios.get(`${server}/api/v1/users/logout`, {
-        withCredentials: true,
-      });
-      dispatch(userNotExists());
-      toast.success(data.message);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    }
-  };
+  const logoutHandler = async () => {};
 
   return (
     <>
@@ -127,6 +98,7 @@ const Header = () => {
   );
 };
 
+// eslint-disable-next-line react/prop-types
 const IconBtn = ({ title, icon, onClick }) => {
   return (
     <Tooltip title={title}>
