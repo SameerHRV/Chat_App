@@ -1,12 +1,17 @@
 import { useFileHandler, useInputValidation } from "6pp";
 import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import { Avatar, Button, Container, IconButton, Paper, Stack, TextField, Typography } from "@mui/material";
+import axios from "axios";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { VisuallyHiddenInput } from "../components/styles/Style";
+import { isUserLoggedIn } from "../redux/redusers/auth";
+import { server } from "../server/server";
 import { emailValidator, usernameValidator } from "../utils/validatorComponent";
 
 const Login = () => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [Login, setLogin] = useState(true);
 
   const avatar = useFileHandler("single");
@@ -22,10 +27,55 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault(); // prevent form submission
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/users/login`,
+        {
+          username: username.value,
+          password: password.value,
+        },
+        config
+      );
+      dispatch(isUserLoggedIn(true));
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
   };
 
-  const handleSignup = async (e) => {
-    e.preventDefault(); // prevent form submission
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    const formData = new FormData();
+    formData.append("avatar", avatar.file);
+    formData.append("name", name.value);
+    formData.append("bio", bio.value);
+    formData.append("username", username.value);
+    formData.append("password", password.value);
+
+    try {
+      const { data } = await axios.post(`${server}/api/v1/users/register`, formData, config);
+
+      dispatch(isUserLoggedIn(true));
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something Went Wrong");
+    }
   };
 
   return (
@@ -99,7 +149,7 @@ const Login = () => {
                 width: "100%",
                 marginTop: "1rem",
               }}
-              onSubmit={handleSignup}
+              onSubmit={handleRegister}
             >
               <Stack position={"relative"} width={"10rem"} margin={"auto"}>
                 <Avatar
