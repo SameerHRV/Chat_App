@@ -1,39 +1,17 @@
-import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { server } from "./server/server";
-import { isUserLoggedIn } from "./redux/redusers/auth";
 
 const Home = React.lazy(() => import("./pages/Home"));
 const Chat = React.lazy(() => import("./pages/Chat"));
 const Groups = React.lazy(() => import("./pages/Groups"));
 const Login = React.lazy(() => import("./pages/Login"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
 
-// let user = true;
+let user = true;
 
 const App = () => {
-  const { user, loader } = useSelector((state) => state.auth);
-
-  // const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   axios
-  //     .get(`${server}/api/v1/users/profile`, {
-  //       withCredentials: true,
-  //     })
-  //     .then((res) => {
-  //       dispatch(isUserLoggedIn(res.data.user));
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, []);
-
-  return loader ? (
-    <div>Loading...</div>
-  ) : (
+  return (
     <BrowserRouter>
       <Routes>
         <Route element={<ProtectRoute user={user} />}>
@@ -50,6 +28,8 @@ const App = () => {
             </ProtectRoute>
           }
         />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
