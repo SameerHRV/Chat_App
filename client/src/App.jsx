@@ -1,32 +1,34 @@
-import axios from "axios";
-import { lazy, Suspense, useEffect } from "react";
-import { Toaster } from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectRoute from "./components/auth/ProtectRoute";
+<<<<<<< HEAD
 import { LayoutLoader } from "./components/layout/Loders";
 import { server } from "./constants/config";
 import { userExists, userNotExists } from "./redux/reducers/auth";
+=======
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { server } from "./server/server";
+import { isUserLoggedIn } from "./redux/redusers/auth";
+>>>>>>> 1716198c2e82467d05208970b2228d4949c6576f
 
-const Home = lazy(() => import("./pages/Home"));
-const Login = lazy(() => import("./pages/Login"));
-const Chat = lazy(() => import("./pages/Chat"));
-const Groups = lazy(() => import("./pages/Groups"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
-const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
-const MessageManagemant = lazy(() => import("./pages/admin/MessageManagemant"));
-const ChatManagement = lazy(() => import("./pages/admin/ChatManagement"));
-const UserManagemant = lazy(() => import("./pages/admin/UserManagemant"));
+const Home = React.lazy(() => import("./pages/Home"));
+const Chat = React.lazy(() => import("./pages/Chat"));
+const Groups = React.lazy(() => import("./pages/Groups"));
+const Login = React.lazy(() => import("./pages/Login"));
 
-// const user = true;
+// let user = true;
 
 const App = () => {
+<<<<<<< HEAD
   // console.log(server);
+=======
+>>>>>>> 1716198c2e82467d05208970b2228d4949c6576f
   const { user, loader } = useSelector((state) => state.auth);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
+<<<<<<< HEAD
   useEffect(() => {
     axios
       .get(`${server}/api/v1/users/profile`, { withCredentials: true })
@@ -65,6 +67,41 @@ const App = () => {
       </Suspense>
 
       <Toaster position="bottom-center" />
+=======
+  // useEffect(() => {
+  //   axios
+  //     .get(`${server}/api/v1/users/profile`, {
+  //       withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       dispatch(isUserLoggedIn(res.data.user));
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
+
+  return loader ? (
+    <div>Loading...</div>
+  ) : (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<ProtectRoute user={user} />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/chat/:id" element={<Chat />} />
+          <Route path="/groups" element={<Groups />} />
+        </Route>
+
+        <Route
+          path="/login"
+          element={
+            <ProtectRoute user={!user} redirect="/">
+              <Login />
+            </ProtectRoute>
+          }
+        />
+      </Routes>
+>>>>>>> 1716198c2e82467d05208970b2228d4949c6576f
     </BrowserRouter>
   );
 };
